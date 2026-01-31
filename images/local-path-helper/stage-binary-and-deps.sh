@@ -43,8 +43,9 @@ package_to_copyright() {
 stage_file() {
     # /lib is a symlink to /usr/lib in debian 12, means we just stick to
     # /usr/lib for all libraries to avoid separating symlinks with the actual binaries
+    # ditto /lib64
     from="${1}"
-    if [[ $from = /lib/*  ]]; then
+    if [[ $from = /lib*/* ]]; then
         from="/usr$from"
     fi
     cp -a --parents "${from}" "${2}"
