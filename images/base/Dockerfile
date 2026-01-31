@@ -110,7 +110,7 @@ COPY --chmod=0755 scripts/target-cc /usr/local/bin/
 # first ensure we can install packages for both architectures
 RUN dpkg --add-architecture arm64 && dpkg --add-architecture amd64 \
     && clean-install bash ca-certificates curl git make pkg-config \
-    crossbuild-essential-amd64 crossbuild-essential-arm64 \
+    build-essential crossbuild-essential-amd64 crossbuild-essential-arm64 \
     libseccomp-dev:amd64 libseccomp-dev:arm64
 # set by makefile to .go-version
 ARG GO_VERSION
