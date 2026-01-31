@@ -49,6 +49,7 @@ COPY --chmod=0644 files/etc/systemd/system/kubelet.service.d/* /etc/systemd/syst
 # - packages needed to run services (systemd)
 # - packages needed for kubernetes components
 # - packages needed for networked backed storage with kubernetes
+# - packages used by kubernetes storage e2e tests
 # - packages needed by the container runtime
 # - misc packages kind uses itself
 # - packages that provide semi-core kubernetes functionality
@@ -76,6 +77,7 @@ RUN chmod 755 /kind/bin && \
       conntrack iptables nftables iproute2 ethtool util-linux mount kmod \
       libseccomp2 pigz fuse-overlayfs \
       nfs-common open-iscsi \
+      e2fsprogs \
       bash ca-certificates curl jq procps \
     && find /lib/systemd/system/sysinit.target.wants/ -name "systemd-tmpfiles-setup.service" -delete \
     && rm -f /lib/systemd/system/multi-user.target.wants/* \
