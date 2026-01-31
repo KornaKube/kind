@@ -26,7 +26,7 @@ NOTE: we have customized it in the following ways:
 - tolerate control plane scheduling taints
 */
 
-const storageProvisionerImage = "docker.io/kindest/local-path-provisioner:v20251212-v0.29.0-alpha-105-g20ccfc88"
+const storageProvisionerImage = "docker.io/kindest/local-path-provisioner:v20260131-0806d083"
 const storageHelperImage = "docker.io/kindest/local-path-helper:v20260131-7181c60a"
 
 // image we need to preload
