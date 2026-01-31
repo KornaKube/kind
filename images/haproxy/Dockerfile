@@ -15,7 +15,7 @@
 # This image is a haproxy image + minimal config so the container will not exit
 # while we rewrite the config at runtime and signal haproxy to reload.
 
-ARG BASE="debian:bookworm-slim"
+ARG BASE="debian:trixie-slim"
 FROM ${BASE} AS build
 
 # NOTE: copyrights.tar.gz is a quirk of Kubernetes's debian-base image
@@ -50,7 +50,7 @@ RUN mkdir -p "${STAGE_DIR}" && \
 
 # See: https://github.com/GoogleContainerTools/distroless/tree/main/base
 # This has /etc/passwd, tzdata, cacerts
-FROM "gcr.io/distroless/static-debian12"
+FROM "gcr.io/distroless/static-debian13"
 
 ARG STAGE_DIR="/opt/stage"
 
