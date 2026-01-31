@@ -85,7 +85,7 @@ RUN chmod 755 /kind/bin && \
     && rm -f /lib/systemd/system/sockets.target.wants/*initctl* \
     && rm -f /lib/systemd/system/basic.target.wants/* \
     && echo "ReadKMsg=no" >> /etc/systemd/journald.conf \
-    && ln -s "$(which systemd)" /sbin/init
+    && ln -s /usr/lib/systemd/systemd /sbin/init
 
 # NOTE: systemd-binfmt.service will register things into binfmt_misc which is kernel-global
 RUN echo "Enabling / Disabling services ... " \
