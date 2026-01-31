@@ -30,7 +30,7 @@ file_to_package() {
     # `dpkg-query --search $file-pattern` outputs lines with the format: "$package: $file-path"
     # where $file-path belongs to $package
     # https://manpages.debian.org/jessie/dpkg/dpkg-query.1.en.html
-    (dpkg-query --search "$(realpath "${1}")" || true) | cut -d':' -f1
+    (dpkg-query --search "$(realpath "${1}")") | cut -d':' -f1
 }
 
 # package_to_copyright gives the path to the copyright file for the package $1
@@ -48,9 +48,10 @@ stage_file() {
         from="/usr$from"
     fi
     cp -a --parents "${from}" "${2}"
+
     # recursively follow symlinks
     if [[ -L "${from}" ]]; then
-        stage_file "$(cd "$(dirname "${from}")" || exit; realpath -s "$(readlink "${from}")")" "${2}"
+        stage_file "$(cd "$(dirname "${from}")"; realpath -s "$(readlink "${from}")")" "${2}"
     fi
     # get the package so we can stage package metadata as well
     package="$(file_to_package "${from}")"
