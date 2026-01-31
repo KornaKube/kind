@@ -20,7 +20,7 @@
 # start from debian slim, this image is reasonably small as a starting point
 # for a kubernetes node image, it doesn't contain much (anything?) we don't need
 # this stage will install basic files and packages
-ARG BASE_IMAGE=debian:bookworm-slim
+ARG BASE_IMAGE=debian:trixie-slim
 FROM $BASE_IMAGE AS base
 
 # copy in static files
