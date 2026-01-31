@@ -15,7 +15,7 @@
 # This image is contains the binaries needed for the local-path-provisioner
 # helper pod. Currently that means: sh, rm, mkdir
 
-ARG BASE="registry.k8s.io/build-image/debian-base:bookworm-v1.0.5"
+ARG BASE="debian:bookworm-slim"
 FROM ${BASE} AS build
 
 # NOTE: copyrights.tar.gz is a quirk of Kubernetes's debian-base image
