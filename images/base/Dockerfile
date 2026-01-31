@@ -20,7 +20,7 @@
 # start from debian slim, this image is reasonably small as a starting point
 # for a kubernetes node image, it doesn't contain much (anything?) we don't need
 # this stage will install basic files and packages
-ARG BASE_IMAGE=debian:bookworm-slim
+ARG BASE_IMAGE=debian:trixie-slim
 FROM $BASE_IMAGE AS base
 
 # copy in static files
@@ -49,6 +49,7 @@ COPY --chmod=0644 files/etc/systemd/system/kubelet.service.d/* /etc/systemd/syst
 # - packages needed to run services (systemd)
 # - packages needed for kubernetes components
 # - packages needed for networked backed storage with kubernetes
+# - packages used by kubernetes storage e2e tests
 # - packages needed by the container runtime
 # - misc packages kind uses itself
 # - packages that provide semi-core kubernetes functionality
@@ -76,6 +77,7 @@ RUN chmod 755 /kind/bin && \
       conntrack iptables nftables iproute2 ethtool util-linux mount kmod \
       libseccomp2 pigz fuse-overlayfs \
       nfs-common open-iscsi \
+      e2fsprogs \
       bash ca-certificates curl jq procps \
     && find /lib/systemd/system/sysinit.target.wants/ -name "systemd-tmpfiles-setup.service" -delete \
     && rm -f /lib/systemd/system/multi-user.target.wants/* \
@@ -85,7 +87,7 @@ RUN chmod 755 /kind/bin && \
     && rm -f /lib/systemd/system/sockets.target.wants/*initctl* \
     && rm -f /lib/systemd/system/basic.target.wants/* \
     && echo "ReadKMsg=no" >> /etc/systemd/journald.conf \
-    && ln -s "$(which systemd)" /sbin/init
+    && ln -s /usr/lib/systemd/systemd /sbin/init
 
 # NOTE: systemd-binfmt.service will register things into binfmt_misc which is kernel-global
 RUN echo "Enabling / Disabling services ... " \
@@ -110,7 +112,7 @@ COPY --chmod=0755 scripts/target-cc /usr/local/bin/
 # first ensure we can install packages for both architectures
 RUN dpkg --add-architecture arm64 && dpkg --add-architecture amd64 \
     && clean-install bash ca-certificates curl git make pkg-config \
-    crossbuild-essential-amd64 crossbuild-essential-arm64 \
+    build-essential crossbuild-essential-amd64 crossbuild-essential-arm64 \
     libseccomp-dev:amd64 libseccomp-dev:arm64
 # set by makefile to .go-version
 ARG GO_VERSION
@@ -122,7 +124,7 @@ RUN eval "$(gimme "${GO_VERSION}")" \
 # stage for building containerd
 FROM go-build AS build-containerd
 ARG TARGETARCH GO_VERSION
-ARG CONTAINERD_VERSION="v2.2.0"
+ARG CONTAINERD_VERSION="v2.2.1"
 ARG CONTAINERD_CLONE_URL="https://github.com/containerd/containerd"
 # we don't build with optional snapshotters, we never select any of these
 # they're not ideal inside kind anyhow, and we save some disk space
