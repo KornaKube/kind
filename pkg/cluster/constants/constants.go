@@ -20,40 +20,6 @@ package constants
 // DefaultClusterName is the default cluster Context name
 const DefaultClusterName = "kind"
 
-// DynamicFilesystemConfigTemplate holds the Envoy bootstrap configuration template
-// for file-based dynamic xDS (CDS and LDS).
-// https://www.envoyproxy.io/docs/envoy/latest/start/quick-start/configuration-dynamic-filesystem
-const DynamicFilesystemConfigTemplate = `
-node:
-  cluster: %s
-  id: %s
-
-dynamic_resources:
-  cds_config:
-    resource_api_version: V3
-    path_config_source:
-      path: %s
-  lds_config:
-    resource_api_version: V3
-    path_config_source:
-      path: %s
-
-admin:
-  access_log_path: /dev/stdout
-  address:
-    socket_address:
-      address: 0.0.0.0
-      port_value: 10000
-`
-
-// keep in sync with dynamicFilesystemConfig
-const (
-	ProxyConfigPathCDS = "/home/envoy/cds.yaml"
-	ProxyConfigPathLDS = "/home/envoy/lds.yaml"
-	ProxyConfigPath    = "/home/envoy/envoy.yaml"
-	ProxyConfigDir     = "/home/envoy"
-)
-
 /* node role value constants */
 const (
 	// ControlPlaneNodeRoleValue identifies a node that hosts a Kubernetes

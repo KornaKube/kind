@@ -70,7 +70,6 @@ func (a *Action) Execute(ctx *actions.ActionContext) error {
 	if err != nil {
 		return err
 	}
-
 	for _, n := range controlPlaneNodes {
 		backendServers[n.String()] = fmt.Sprintf("%s:%d", n.String(), common.APIServerInternalPort)
 	}
@@ -92,8 +91,8 @@ func (a *Action) Execute(ctx *actions.ActionContext) error {
 	}
 
 	// Atomic Update inside the container
-	tmpLDS := constants.ProxyConfigPathLDS + ".tmp"
-	tmpCDS := constants.ProxyConfigPathCDS + ".tmp"
+	tmpLDS := loadbalancer.ProxyConfigPathLDS + ".tmp"
+	tmpCDS := loadbalancer.ProxyConfigPathCDS + ".tmp"
 
 	if err := nodeutils.WriteFile(loadBalancerNode, tmpLDS, ldsConfig); err != nil {
 		return errors.Wrap(err, "failed to copy loadbalancer config to node")
@@ -101,7 +100,7 @@ func (a *Action) Execute(ctx *actions.ActionContext) error {
 	if err := nodeutils.WriteFile(loadBalancerNode, tmpCDS, cdsConfig); err != nil {
 		return errors.Wrap(err, "failed to copy loadbalancer config to node")
 	}
-	cmd := fmt.Sprintf("chmod 666 %s %s && mv %s %s && mv %s %s", tmpCDS, tmpLDS, tmpCDS, constants.ProxyConfigPathCDS, tmpLDS, constants.ProxyConfigPathLDS)
+	cmd := fmt.Sprintf("chmod 666 %s %s && mv %s %s && mv %s %s", tmpCDS, tmpLDS, tmpCDS, loadbalancer.ProxyConfigPathCDS, tmpLDS, loadbalancer.ProxyConfigPathLDS)
 	if err := loadBalancerNode.Command("sh", "-c", cmd).Run(); err != nil {
 		return errors.Wrap(err, "failed to reload envoy config")
 	}

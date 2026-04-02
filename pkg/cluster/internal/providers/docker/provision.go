@@ -284,30 +284,7 @@ func runArgsForLoadBalancer(cfg *config.Cluster, name string, args []string) ([]
 	// finally, specify the image to run
 	args = append(args, loadbalancer.Image)
 
-	// populate the values to dynamic template
-	envoyConfig := fmt.Sprintf(
-		constants.DynamicFilesystemConfigTemplate,
-		cfg.Name, // node.cluster = Kind cluster name
-		name,     // node.id = container name
-		constants.ProxyConfigPathCDS,
-		constants.ProxyConfigPathLDS,
-	)
-
-	// Create dynamic Envoy config files and start Envoy with retry,
-	// since it has an initialization phase before forwarding traffic.
-	// cmd := []string{"bash", "-c",
-	// 	fmt.Sprintf(`mkdir -p %s && echo -en '%s' > %s && touch %s && touch %s && while true; do envoy -c %s && break; sleep 1; done`, constants.ProxyConfigDir,
-	// 		envoyConfig, constants.ProxyConfigPath, constants.ProxyConfigPathCDS, constants.ProxyConfigPathLDS, constants.ProxyConfigPath)}
-	// Create dynamic Envoy config files with valid empty resources
-	emptyConfig := "resources: []"
-	cmd := []string{"bash", "-c",
-		fmt.Sprintf(`mkdir -p %s && echo -en '%s' > %s && echo -en '%s' > %s && echo -en '%s' > %s && while true; do envoy -c %s && break; sleep 1; done`,
-			constants.ProxyConfigDir,
-			envoyConfig, constants.ProxyConfigPath,
-			emptyConfig, constants.ProxyConfigPathCDS, // Initialize CDS
-			emptyConfig, constants.ProxyConfigPathLDS, // Initialize LDS
-			constants.ProxyConfigPath)}
-	args = append(args, cmd...)
+	args = append(args, loadbalancer.GenerateBootstrapCommand(cfg.Name, name)...)
 
 	return args, nil
 }
