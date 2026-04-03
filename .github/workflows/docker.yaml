@@ -20,7 +20,7 @@ jobs:
       fail-fast: false
       matrix:
         ipFamily: [ipv4, ipv6]
-        deployment: [singleNode, multiNode]
+        deployment: [singleNode, multiNode, multiMaster]
     env:
       JOB_NAME: "docker-${{ matrix.deployment }}-${{ matrix.ipFamily }}"
       IP_FAMILY: ${{ matrix.ipFamily }}
@@ -51,6 +51,20 @@ jobs:
           nodes:
           - role: control-plane
           - role: worker
+          - role: worker
+          EOF
+
+      - name: Create multi master cluster
+        if: ${{ matrix.deployment == 'multiMaster' }}
+        run: |
+          cat <<EOF | /usr/local/bin/kind create cluster -v7 --wait 1m --retain --config=-
+          kind: Cluster
+          apiVersion: kind.x-k8s.io/v1alpha4
+          networking:
+            ipFamily: ${IP_FAMILY}
+          nodes:
+          - role: control-plane
+          - role: control-plane
           - role: worker
           EOF
 
