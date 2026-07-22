@@ -135,8 +135,6 @@ spec:
           requests:
             cpu: "100m"
             memory: "50Mi"
-          limits:
-            cpu: "100m"
         securityContext:
           privileged: false
           capabilities:
